@@ -5,6 +5,7 @@ const cors = require('cors');
 const userRouter = require('./Routes/user')
 const todoRouter = require('./Routes/todo')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 const secretKey = "Coding" //should be moved to different file later
 const validation = require('./validate')
 
