@@ -5,7 +5,8 @@ const mongoose = require('mongoose')
 const todoSchema = new mongoose.Schema({
     toDo: String,
     description: String,
-    completed:Boolean
+    completed:{type: Boolean, default: false},
+    priority: {type: String, enum: ['low','medium','high'], default: 'medium'}
 }, {collection: 'todo'})
 
 const ToDo = mongoose.model("ToDo",todoSchema)
