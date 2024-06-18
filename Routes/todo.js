@@ -25,4 +25,21 @@ router.post('/', async(req,res) => {
     res.status(200).send(req.body)
 })
 
+
+router.patch('/completed/:id', async (req, res) => {
+    console.log('Entering completed patch section')
+    try {
+      const todoId = req.params.id;
+      const todo = await ToDo.findByIdAndUpdate(todoId, { completed: true }, { new: true });
+      console.log("todo @!@!@!",todo)
+      if (!todo) {
+        return res.status(404).json({ error: 'Todo not found' });
+      }
+      
+      res.status(200).json(todo);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
 module.exports = router;

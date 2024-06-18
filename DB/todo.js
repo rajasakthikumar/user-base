@@ -4,7 +4,8 @@ const mongoose = require('mongoose')
 
 const todoSchema = new mongoose.Schema({
     toDo: String,
-    description: String
+    description: String,
+    completed:Boolean
 }, {collection: 'todo'})
 
 const ToDo = mongoose.model("ToDo",todoSchema)
