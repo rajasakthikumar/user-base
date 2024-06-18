@@ -27,11 +27,11 @@ router.post('/', async(req,res) => {
 
 
 router.patch('/completed/:id', async (req, res) => {
-    console.log('Entering completed patch section')
+   
     try {
       const todoId = req.params.id;
       const todo = await ToDo.findByIdAndUpdate(todoId, { completed: true }, { new: true });
-      console.log("todo @!@!@!",todo)
+    
       if (!todo) {
         return res.status(404).json({ error: 'Todo not found' });
       }
