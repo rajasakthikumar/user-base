@@ -2,12 +2,17 @@ const express = require('express');
 const mongoose = require('mongoose');
 const User = require('./DB/user');
 const cors = require('cors');
-const userRouter = require('./Routes/user')
-const todoRouter = require('./Routes/todo')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const {z} = require('zod');
+
+const userRouter = require('./Routes/user')
+const todoRouter = require('./Routes/todo')
+
 const secretKey = "Coding" //should be moved to different file later
 const validation = require('./validate')
+const {registerSchema,loginSchema} = require('./validationSchema');
+
 
 const app = express()
 // middleware
@@ -36,14 +41,18 @@ app.get('/', (req, res) => {
 
 app.post('/register', async (req, res) => {
   try {
+    registerSchema.parse(req.body)
     const { username,age,email,phone, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ username,age,email,phone, password: hashedPassword });
+    const newUser = await User.create({ username, age, email, phone, password: hashedPassword });
 
     const token = jwt.sign({ userId: newUser._id }, jwtSecret);
 
     res.status(201).json({ Authorization: token });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+        return res.status(400).json({error: error.errors[0].message})
+    }
     res.status(400).json({ error: error.message });
   }
 });
@@ -52,6 +61,9 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
+function validateEmail(email) {
+
+}
 
 async function run() {
     await mongoose.connect("mongodb://localhost:27017/todo").then(console.log("connected"));
