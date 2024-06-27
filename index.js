@@ -13,6 +13,8 @@ const secretKey = "Coding" //should be moved to different file later
 const validation = require('./validate')
 const {registerSchema,loginSchema} = require('./validationSchema');
 
+const jwtSecret = "secret"
+
 
 const app = express()
 // middleware
@@ -20,7 +22,7 @@ app.use(express.json());
 app.use(cors());
 app.use(validation)
 
-
+// just for testing purpose
 app.use((req,res,next)=> {
     console.log('App Level Middleware');
     console.log('Flow First comes here')
@@ -37,6 +39,28 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
+app.post('/login', async (req,res) => {
+  try 
+  {
+    loginSchema.parse(req.body);
+    const {username,password} = req.body;
+    const userAccount = await User.find({name:username})
+    bcrypt.compare(password,userAccount.password, (err,result) => {
+        if(result) {
+          res.status(200).json({message: "User Found"});
+        } else {
+          res.status(400).json({message:"Password error"})
+        }
+    })
+
+  } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({error: error.message})
+      }
+
+
+  }
+})
 
 
 app.post('/register', async (req, res) => {
