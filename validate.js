@@ -12,7 +12,7 @@ const checkUrlAndValidateToken = (req, res, next) => {
 
 
 //   Hard coding the secret_key as of now
-  jwt.verify(token, 'Coding', (err, decoded) => {
+  jwt.verify(token, 'secret', (err, decoded) => {
     if (err) {
       return res.status(401).json({ error: 'Failed to authenticate token' });
     }

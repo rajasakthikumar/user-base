@@ -44,7 +44,8 @@ app.post('/login', async (req,res) => {
   {
     loginSchema.parse(req.body);
     const {username,password} = req.body;
-    const userAccount = await User.find({name:username})
+    const userAccount = await User.findOne({username:username})
+  
     bcrypt.compare(password,userAccount.password, (err,result) => {
         if(result) {
           res.status(200).json({message: "User Found"});
