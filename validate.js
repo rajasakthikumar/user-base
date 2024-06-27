@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const session = require("express-session");
 
 const checkUrlAndValidateToken = (req, res, next) => {
   if (req.path === '/register') {
