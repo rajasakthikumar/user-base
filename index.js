@@ -5,6 +5,8 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const {z} = require('zod');
+const session = require("express-session");
+
 
 const userRouter = require('./Routes/user')
 const todoRouter = require('./Routes/todo')
@@ -21,6 +23,13 @@ const app = express()
 app.use(express.json());
 app.use(cors());
 app.use(validation)
+
+app.use(session({
+  secret: 'secret', 
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true } 
+}));
 
 // just for testing purpose
 app.use((req,res,next)=> {
@@ -48,7 +57,8 @@ app.post('/login', async (req,res) => {
   
     bcrypt.compare(password,userAccount.password, (err,result) => {
         if(result) {
-          res.status(200).json({message: "User Found"});
+          req.session.user = {user: username}
+          res.status(200).json({message: "User Found.Logged in Successfully"});
         } else {
           res.status(400).json({message:"Password error"})
         }
@@ -58,10 +68,16 @@ app.post('/login', async (req,res) => {
       if (error instanceof z.ZodError) {
         res.status(400).json({error: error.message})
       }
-
-
   }
 })
+
+app.get('/logout', (req,res) => {
+  req.session.destroy(err => {
+    if (err) {
+      res.status(400).json({message:"Failed to logout"})
+    }
+  })
+});
 
 
 app.post('/register', async (req, res) => {
@@ -86,9 +102,6 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
-function validateEmail(email) {
-
-}
 
 async function run() {
     await mongoose.connect("mongodb://localhost:27017/todo").then(console.log("connected"));

@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const session = require("express-session");
 
 const checkUrlAndValidateToken = (req, res, next) => {
   if (req.path === '/register') {
@@ -12,7 +11,7 @@ const checkUrlAndValidateToken = (req, res, next) => {
   }
 
 
-//   Hard coding the secret_key as of now
+//   Hard coding the secret_key as of now, should move secret to different file and git ignore it
   jwt.verify(token, 'secret', (err, decoded) => {
     if (err) {
       return res.status(401).json({ error: 'Failed to authenticate token' });
